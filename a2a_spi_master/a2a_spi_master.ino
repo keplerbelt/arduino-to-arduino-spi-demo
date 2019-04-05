@@ -13,6 +13,8 @@ struct Button {
 struct Button buttonA;
 struct Button buttonB;
 
+SPISettings spiSettings(1000000, MSBFIRST, SPI_MODE0);
+
 void setup (void) {
   // Serial for Debugging
   Serial.begin (9600);
@@ -21,7 +23,6 @@ void setup (void) {
   // also put SCK, MOSI into LOW state, and SS into HIGH state.
   // Then put SPI hardware into Master mode and turn SPI on
   SPI.begin ();
-  SPI.setClockDivider(SPI_CLOCK_DIV8);
 
   // Setup button A
   buttonA.pin = 6;
@@ -50,6 +51,8 @@ void loop (void) {
 void xferData(struct Button button) {
   char c;
 
+  SPI.beginTransaction(spiSettings);
+
   // Enable Slave Select
   // SS is pin 10
   digitalWrite(SS, LOW);
@@ -60,11 +63,12 @@ void xferData(struct Button button) {
 
   // Send data
   for (const char * p = data; c = *p; p++) {
-    SPI.transfer (c);
+    SPI.transfer(c);
   }
 
   // Disable Slave Select
   digitalWrite(SS, HIGH);
+  SPI.endTransaction();
 }
 
 
