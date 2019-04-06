@@ -21,8 +21,8 @@ void setup (void) {
   // Turn on interrupts
   SPCR |= _BV(SPIE);
 
-  // CLK = 0.5 MHz
-  SPCR |= _BV(SPR1);
+  // CLK = 8 MHz
+  //SPCR |= _BV(SPR1);
   SPSR |= _BV(SPI2X);
 
   pos = 0;

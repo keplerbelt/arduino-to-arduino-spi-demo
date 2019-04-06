@@ -13,7 +13,7 @@ struct Button {
 struct Button buttonA;
 struct Button buttonB;
 
-SPISettings spiSettings(125000, MSBFIRST, SPI_MODE0);
+SPISettings spiSettings(2000000, MSBFIRST, SPI_MODE0);
 
 void setup (void) {
   // Serial for Debugging
