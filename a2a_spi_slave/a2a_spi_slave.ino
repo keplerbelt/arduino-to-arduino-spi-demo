@@ -21,6 +21,10 @@ void setup (void) {
   // Turn on interrupts
   SPCR |= _BV(SPIE);
 
+  // CLK = 0.5 MHz
+  SPCR |= _BV(SPR1);
+  SPSR |= _BV(SPI2X);
+
   pos = 0;
   process_it = false;
 
@@ -34,43 +38,44 @@ void setup (void) {
 ISR (SPI_STC_vect) {
   byte c = SPDR;
 
-  // add to buffer if room
-  if (pos < sizeof buf) {
-    buf [pos++] = c;
+  if (c > 47 && c < 91) {
+    // add to buffer if room
+    if (pos < sizeof buf) {
+      buf[pos++] = c;
 
-    // newline means time to process buffer
-    if (c == '\n') {
-      process_it = true;
+      // Z (ASCII 90) means process the buffer
+      if (c == 90) {
+        process_it = true;
+      }
     }
+  } else {
+    pos = 0;
   }
 }
 
 void loop (void) {
   // wait for flag set in ISR
   if (process_it) {
-    buf [pos] = 0;
-    Serial.println(buf);
-    changeLed(buf);
-    pos = 0;
+    changeLed(buf[0], buf[1]);
     process_it = false;
   }
 }
 
 // update LED output
-void changeLed(char * buf) {
+void changeLed(char pinSel, char valSel) {
   int pin, value;
 
-  if (buf[0] == 'A') {
+  if (pinSel == 'A') {
     pin = pinA;
-  } else if (buf[0] == 'B') {
+  } else if (pinSel == 'B') {
     pin = pinB;
   } else {
     return;
   }
 
-  if (buf[1] == '1') {
+  if (valSel == '1') {
     value = HIGH;
-  } else if (buf[1] == '0') {
+  } else if (valSel == '0') {
     value = LOW;
   } else {
     return;

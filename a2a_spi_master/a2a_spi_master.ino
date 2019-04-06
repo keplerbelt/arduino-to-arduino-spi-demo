@@ -13,7 +13,7 @@ struct Button {
 struct Button buttonA;
 struct Button buttonB;
 
-SPISettings spiSettings(1000000, MSBFIRST, SPI_MODE0);
+SPISettings spiSettings(125000, MSBFIRST, SPI_MODE0);
 
 void setup (void) {
   // Serial for Debugging
@@ -58,7 +58,7 @@ void xferData(struct Button button) {
   digitalWrite(SS, LOW);
 
   // Create payload
-  char data[3] = {button.label, ('0' + button.toggleValue), '\n'};
+  char data[4] = {button.label, ('0' + button.toggleValue), 'Z', '\n'};
   Serial.println(data);
 
   // Send data
